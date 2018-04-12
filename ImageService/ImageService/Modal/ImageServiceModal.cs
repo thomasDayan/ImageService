@@ -16,16 +16,16 @@ namespace ImageService.Modal
         #region Members
         private string m_OutputFolder;            // The Output Folder
         private int m_thumbnailSize;              // The Size Of The Thumbnail Size
+        #endregion
 
-        public ImageServiceModal(string m , int n)
+        public ImageServiceModal(string m, int size)
         {
             this.m_OutputFolder = m;
-            this.m_thumbnailSize = n;
+            this.m_thumbnailSize = size;
         }
 
         public string AddFile(string path, out bool result)
         {
-            
             if (File.Exists(path))
             {
                 try
@@ -52,21 +52,23 @@ namespace ImageService.Modal
                         Image image = Image.FromFile(path);
                         Image thumbnail_image = image.GetThumbnailImage(this.m_thumbnailSize, this.m_thumbnailSize, () => false, IntPtr.Zero);
                         thumbnail_image.Save(m_OutputFolder + "\\" + "Thumbnails" + year_month_Path + "\\" + Path.GetFileName(path));
+                        image.Dispose();
                     }
                     result = true;
                     return m_OutputFolder + year_month_Path;
-                } catch (Exception e) {
-                    result = false;
-                    throw e ;
                 }
-
-            } else {
+                catch (Exception e)
+                {
+                    result = false;
+                    throw e;
+                }
+            }
+            else
+            {
                 result = false;
                 return "File doesn't exist!";
             }
         }
-
-        #endregion
 
     }
 }

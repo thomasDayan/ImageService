@@ -37,6 +37,7 @@ namespace ImageService.Controller.Handlers
             if (e.CommandID == (int) CommandEnum.NewFileCommand)
             {
                 if (!e.RequestDirPath.Equals(m_path)) { return; }
+                m_logging.Log("going into addFile", MessageTypeEnum.INFO);
                 string r = m_controller.ExecuteCommand(e.CommandID, e.Args , out result);
                 if (!result)
                 {

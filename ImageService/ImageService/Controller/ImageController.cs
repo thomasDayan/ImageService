@@ -12,12 +12,13 @@ namespace ImageService.Controller
 {
     public class ImageController : IImageController
     {
-        private IImageServiceModal m_modal;                      // The Modal Object
+        private IImageServiceModal m_modal; // The Modal Object
         private Dictionary<int, ICommand> commands;
 
         public ImageController(IImageServiceModal modal)
         {
-            m_modal = modal; //storing the model of the system
+            //storing the model of the system
+            m_modal = modal; 
             commands = new Dictionary<int, ICommand>()
             {
                 {(int)CommandEnum.NewFileCommand, new NewFileCommand(m_modal) }
@@ -28,8 +29,10 @@ namespace ImageService.Controller
         {
             if (commands.ContainsKey(commandID))
             {
+                Console.WriteLine("executing command");
                 return commands[commandID].Execute(args, out resultSuccesful);
-            } else
+            }
+            else
             {
                 resultSuccesful = false;
                 return "command not found";

@@ -65,14 +65,14 @@ namespace ImageService
 
             int ThumbnailSize = int.Parse(ConfigurationManager.AppSettings.Get("ThumbnailSize"));
 
-            if (args.Count() > 0)
-            {
-                eventSourceName = args[0];
-            }
-            if (args.Count() > 1)
-            {
-                logName = args[1];
-            }
+            //if (args.Count() > 0)
+            //{
+            //    eventSourceName = args[0];
+            //}
+            //if (args.Count() > 1)
+            //{
+            //    logName = args[1];
+            //}
             eventLog1 = new System.Diagnostics.EventLog();
             try {
                 if (!System.Diagnostics.EventLog.SourceExists(eventSourceName))
@@ -94,11 +94,16 @@ namespace ImageService
 
             // create image controller
             controller = new ImageController(modal);
+            m_imageServer = new ImageServer(controller, logging);
+            m_imageServer.CreateHandler(handler);
         }
 
 		// Here You will Use the App Config!
         protected override void OnStart(string[] args)
         {
+            System.Threading.Thread.Sleep(10000);
+
+
             eventLog1.WriteEntry("In OnStart");
             // Set up a timer to trigger every minute.  
             System.Timers.Timer timer = new System.Timers.Timer();
