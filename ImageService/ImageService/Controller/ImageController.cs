@@ -15,9 +15,13 @@ namespace ImageService.Controller
         private IImageServiceModal m_modal; // The Modal Object
         private Dictionary<int, ICommand> commands;
 
+        /// <summary>
+        /// Constructor for ImageController.
+        /// </summary>
+        /// <param name="modal"> Image service modal. </param>
         public ImageController(IImageServiceModal modal)
         {
-            //storing the model of the system
+            //storing the system's modal.
             m_modal = modal; 
             commands = new Dictionary<int, ICommand>()
             {
@@ -25,6 +29,13 @@ namespace ImageService.Controller
             };
         }
 
+        /// <summary>
+        /// Executes the command using the right Command.
+        /// </summary>
+        /// <param name="commandID"> The command. </param>
+        /// <param name="args"> Arguments. </param>
+        /// <param name="resultSuccesful"> If it succeded</param>
+        /// <returns></returns>
         public string ExecuteCommand(int commandID, string[] args, out bool resultSuccesful)
         {
             if (commands.ContainsKey(commandID))

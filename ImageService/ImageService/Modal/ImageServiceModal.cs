@@ -18,12 +18,23 @@ namespace ImageService.Modal
         private int m_thumbnailSize;              // The Size Of The Thumbnail Size
         #endregion
 
+        /// <summary>
+        /// Constructor for ImageServiceModal.
+        /// </summary>
+        /// <param name="m"> Output folder path. </param>
+        /// <param name="size"> Thumbnail size. </param>
         public ImageServiceModal(string m, int size)
         {
             this.m_OutputFolder = m;
             this.m_thumbnailSize = size;
         }
 
+        /// <summary>
+        /// Adds the file to all relevant directories.
+        /// </summary>
+        /// <param name="path"> To the picture. </param>
+        /// <param name="result"> Wether the adding worked. </param>
+        /// <returns></returns>
         public string AddFile(string path, out bool result)
         {
             if (File.Exists(path))
@@ -33,7 +44,7 @@ namespace ImageService.Modal
                     DateTime dt = new DateTime();
                     dt = File.GetCreationTime(path);
 
-                    string day = dt.Day.ToString();
+                    //string day = dt.Day.ToString();
                     string month = dt.Month.ToString();
                     string year = dt.Year.ToString();
 
@@ -48,7 +59,7 @@ namespace ImageService.Modal
                     // copy the file if not exist already
                     if (!File.Exists(m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path)))
                     {
-                        File.Copy(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
+                        File.Move(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
                         Image image = Image.FromFile(path);
                         Image thumbnail_image = image.GetThumbnailImage(this.m_thumbnailSize, this.m_thumbnailSize, () => false, IntPtr.Zero);
                         thumbnail_image.Save(m_OutputFolder + "\\" + "Thumbnails" + year_month_Path + "\\" + Path.GetFileName(path));

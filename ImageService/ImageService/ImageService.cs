@@ -55,6 +55,10 @@ namespace ImageService
         private ILoggingService logging;
         private int eventId = 1;
 
+        /// <summary>
+        /// Constructor for ImageService.
+        /// </summary>
+        /// <param name="args"> Arguments. </param>
         public ImageService(string[] args)
         {
             InitializeComponent();
@@ -65,14 +69,6 @@ namespace ImageService
 
             int ThumbnailSize = int.Parse(ConfigurationManager.AppSettings.Get("ThumbnailSize"));
 
-            //if (args.Count() > 0)
-            //{
-            //    eventSourceName = args[0];
-            //}
-            //if (args.Count() > 1)
-            //{
-            //    logName = args[1];
-            //}
             eventLog1 = new System.Diagnostics.EventLog();
             try {
                 if (!System.Diagnostics.EventLog.SourceExists(eventSourceName))
@@ -98,7 +94,10 @@ namespace ImageService
             m_imageServer.CreateHandler(handler);
         }
 
-		// Here You will Use the App Config!
+		/// <summary>
+        /// Invoked when the service has started.
+        /// </summary>
+        /// <param name="args"> Arguments. </param>
         protected override void OnStart(string[] args)
         {
             System.Threading.Thread.Sleep(10000);
@@ -121,12 +120,20 @@ namespace ImageService
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
         {
             // TODO: Insert monitoring activities here.  
             eventLog1.WriteEntry("Monitoring the System", EventLogEntryType.Information, eventId++);
         }
 
+        /// <summary>
+        /// Invoked when the service is stopped.
+        /// </summary>
         protected override void OnStop()
         {
             // Update the service state to stop Pending.  
@@ -139,19 +146,25 @@ namespace ImageService
             eventLog1.WriteEntry("In onStop.");
 
             // close the server
-            //this.m_imageServer.CloseServer();
+            // this.m_imageServer.onCloseServer();
 
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_STOPPED;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
         }
 
+        /// <summary>
+        /// Invoked when the service is continued.
+        /// </summary>
         protected override void OnContinue()
         {
             // write continue to event log
             eventLog1.WriteEntry("In OnContinue.");
         }
 
+        /// <summary>
+        /// Initializes the event log.
+        /// </summary>
         private void InitializeComponent()
         {
             this.eventLog1 = new System.Diagnostics.EventLog();
@@ -160,6 +173,11 @@ namespace ImageService
 
         }
 
+        /// <summary>
+        /// Determines the message type, and writes it in the log.
+        /// </summary>
+        /// <param name="sender"> The sender. </param>
+        /// <param name="e"> The event. </param>
         private void MessageTypes(object sender , MessageRecievedEventArgs e)
         {
             EventLogEntryType type;

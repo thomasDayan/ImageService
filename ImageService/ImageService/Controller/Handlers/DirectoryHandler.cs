@@ -22,15 +22,25 @@ namespace ImageService.Controller.Handlers
         private string m_path;                              // The Path of directory
         #endregion
 
-
+        /// <summary>
+        /// Constructor for DirectoryHandler.
+        /// </summary>
+        /// <param name="m"> ImageController. </param>
+        /// <param name="n"> LoggingService. </param>
         public DirectoryHandler(IImageController m , ILoggingService n)
         {
             m_controller = m;
             m_logging = n;
         }
 
-        public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;              // The Event That Notifies that the Directory is being closed
+        // The Event That Notifies that the Directory is being closed
+        public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;
 
+        /// <summary>
+        /// Executes the commands using the controller.
+        /// </summary>
+        /// <param name="sender"> Sender. </param>
+        /// <param name="e"> Event. </param>
         public void OnCommandRecieved(object sender, CommandRecievedEventArgs e)
         {
             bool result;
@@ -54,6 +64,10 @@ namespace ImageService.Controller.Handlers
             }
         }
        
+        /// <summary>
+        /// Starts to handle a directory.
+        /// </summary>
+        /// <param name="dirPath"> Path to directory. </param>
         public void StartHandleDirectory(string dirPath)
         {
             m_path = dirPath;
@@ -64,6 +78,11 @@ namespace ImageService.Controller.Handlers
 
         }
 
+        /// <summary>
+        /// Creates the files to listen to, and adds the file if it's the correct one.
+        /// </summary>
+        /// <param name="sender"> Sender. </param>
+        /// <param name="e"> Event. </param>
         public void Create(object sender, FileSystemEventArgs e)
         {
             bool f;
@@ -76,6 +95,9 @@ namespace ImageService.Controller.Handlers
             }
         }
 
+        /// <summary>
+        /// Ends the handler.
+        /// </summary>
         private void EndHandler()
         {
             m_dirWatcher.EnableRaisingEvents = false;

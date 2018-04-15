@@ -12,6 +12,11 @@ namespace ImageService.Modal
 
         public string Message { get; set; }             // The Message That goes to the logger
 
+        /// <summary>
+        /// constructor.
+        /// </summary>
+        /// <param name="dirPath"> Path to directory. </param>
+        /// <param name="message"> Message. </param>
         public DirectoryCloseEventArgs(string dirPath, string message)
         {
             DirectoryPath = dirPath;                    // Setting the Directory Name
