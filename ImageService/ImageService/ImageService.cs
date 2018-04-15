@@ -66,8 +66,24 @@ namespace ImageService
             string logName = ConfigurationManager.AppSettings.Get("LogName");
             string outputDir = ConfigurationManager.AppSettings.Get("OutputDir");
             string handler = ConfigurationManager.AppSettings.Get("Handler");
-
             int ThumbnailSize = int.Parse(ConfigurationManager.AppSettings.Get("ThumbnailSize"));
+
+            if (args.Count() > 0)
+            {
+                eventSourceName = args[0];
+            }
+            if (args.Count() > 1)
+            {
+                logName = args[1];
+            }
+            if (eventSourceName == null)
+            {
+                eventSourceName = "MySource";
+            }
+            if (logName == null)
+            {
+                logName = "MyNewLog";
+            }
 
             eventLog1 = new System.Diagnostics.EventLog();
             try {
@@ -121,10 +137,10 @@ namespace ImageService
         }
 
         /// <summary>
-        /// 
+        /// Monitores the system every time the timer goes off.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+        /// <param name="sender"> Sender. </param>
+        /// <param name="args"> Args. </param>
         public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
         {
             // TODO: Insert monitoring activities here.  
@@ -140,17 +156,17 @@ namespace ImageService
             ServiceStatus serviceStatus = new ServiceStatus();
             serviceStatus.dwCurrentState = ServiceState.SERVICE_STOP_PENDING;
             serviceStatus.dwWaitHint = 100000;
-            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            SetServiceStatus(ServiceHandle, ref serviceStatus);
 
             // write stop to event log
             eventLog1.WriteEntry("In onStop.");
 
             // close the server
-            // this.m_imageServer.onCloseServer();
+            m_imageServer.onCloseServer();
 
             // Update the service state to Running.  
             serviceStatus.dwCurrentState = ServiceState.SERVICE_STOPPED;
-            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            SetServiceStatus(ServiceHandle, ref serviceStatus);
         }
 
         /// <summary>

@@ -41,28 +41,35 @@ namespace ImageService.Modal
             {
                 try
                 {
+                    if (!Directory.Exists(m_OutputFolder))
+                    {
+                        DirectoryInfo outputDirectory = Directory.CreateDirectory(m_OutputFolder);
+                        // Setting the output directory to be hidden
+                        outputDirectory.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                    }
+
                     DateTime dt = new DateTime();
                     dt = File.GetCreationTime(path);
-
-                    //string day = dt.Day.ToString();
+                    
                     string month = dt.Month.ToString();
                     string year = dt.Year.ToString();
-
-                    Directory.CreateDirectory(m_OutputFolder);
-                    // create the thumbnails folder
+                    
+                    // Create the thumbnails folder
                     Directory.CreateDirectory(m_OutputFolder + "\\Thumbnails");
 
                     string year_month_Path = "\\" + year + "\\" + month;
                     Directory.CreateDirectory(m_OutputFolder + year_month_Path);
                     Directory.CreateDirectory(m_OutputFolder + "\\Thumbnails" + year_month_Path);
 
-                    // copy the file if not exist already
+                    // Move the file if not exist already
                     if (!File.Exists(m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path)))
                     {
                         File.Move(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
                         Image image = Image.FromFile(path);
-                        Image thumbnail_image = image.GetThumbnailImage(this.m_thumbnailSize, this.m_thumbnailSize, () => false, IntPtr.Zero);
-                        thumbnail_image.Save(m_OutputFolder + "\\" + "Thumbnails" + year_month_Path + "\\" + Path.GetFileName(path));
+                        Image thumbnail_image = image.GetThumbnailImage(this.m_thumbnailSize, 
+                            this.m_thumbnailSize, () => false, IntPtr.Zero);
+                        thumbnail_image.Save(m_OutputFolder + "\\" + "Thumbnails" + year_month_Path + 
+                            "\\" + Path.GetFileName(path));
                         image.Dispose();
                     }
                     result = true;
