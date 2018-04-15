@@ -41,9 +41,11 @@ namespace ImageService.Server
         public void CreateHandler(string path)
         {
             IDirectoryHandler directoryHandler = new DirectoryHandler(m_controller, m_logging);
+
             // add to events
-            
             CommandRecieved += directoryHandler.OnCommandRecieved;
+            directoryHandler.DirectoryClose += DeleteHandler;
+
             // start the handler
             directoryHandler.StartHandleDirectory(path);
         }
@@ -51,12 +53,9 @@ namespace ImageService.Server
         /// <summary>
         /// When the server closes.
         /// </summary>
-        /// <param name="sender"> Sender. </param>
-        /// <param name="e"> Event. </param>
-        public void onCloseServer(object sender, DirectoryCloseEventArgs e)
+        public void onCloseServer()
         {
-            DirectoryHandler handler = (DirectoryHandler)sender;
-            CommandRecieved -= handler.OnCommandRecieved;
+            SendCommand(new CommandRecievedEventArgs((int)CommandEnum.CloseCommand, null, null));
         }
 
         /// <summary>
@@ -66,6 +65,19 @@ namespace ImageService.Server
         public void SendCommand(CommandRecievedEventArgs e)
         {
             CommandRecieved?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Deletes the handler.
+        /// </summary>
+        /// <param name="sender"> Sender. </param>
+        /// <param name="e"> Event. </param>
+        public void DeleteHandler(object sender, DirectoryCloseEventArgs e)
+        {
+            IDirectoryHandler handler = (IDirectoryHandler)sender;
+            CommandRecieved -= handler.OnCommandRecieved;
+            handler.DirectoryClose -= DeleteHandler;
+            m_logging.Log(e.Message + "directory is closed", Logging.Modal.MessageTypeEnum.INFO);
         }
     }
 }
