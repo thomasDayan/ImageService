@@ -1,0 +1,61 @@
+commit 693224437f9e91d6dbf63e8e57d1ef91c76540c5
+Merge: 9f0af58 36c64c2
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Sun Apr 15 21:37:30 2018 +0300
+
+    Merge branch 'master' of https://github.com/erm19/ImageService
+
+commit 9f0af5850fd2476882bf86133dcc69bd0135ccbd
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Sun Apr 15 21:37:22 2018 +0300
+
+    closing and finishing touches
+
+commit 36c64c2a790c4f6b56d4497182e853dbeb90ba38
+Author: tomerdayan168 <33786803+tomerdayan168@users.noreply.github.com>
+Date:   Sun Apr 15 21:35:46 2018 +0300
+
+    Add files via upload
+
+commit 6bdfb2fdb72a5fad535d2463fee16c4fb515b4cb
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Sun Apr 15 15:51:15 2018 +0300
+
+    finished comments
+
+commit 0c4c9160eb54d948bb2ed4b59f38e07b9ee23dc0
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Thu Apr 12 20:01:38 2018 +0300
+
+    moving pictures
+
+commit 39520d199b156ce9bca1ea473ee3401b29d310d6
+Merge: 7768499 b375ca5
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Thu Apr 12 13:04:01 2018 +0300
+
+    Merge branch 'master' of https://github.com/erm19/ImageService
+
+commit b375ca587df4e78eddaf36f66ddd63a90ae87c85
+Author: erm19 <33811417+erm19@users.noreply.github.com>
+Date:   Thu Apr 12 13:00:32 2018 +0300
+
+    Delete ImageService.sln
+
+commit 776849995a73839acb5723f93ab62631dcc40203
+Author: erm19 <eyal.moskowitz@gmail.com>
+Date:   Thu Apr 12 12:52:26 2018 +0300
+
+    Initial Commit
+
+commit d3abf8052a88156345b4f2c7c412e2c30e5b7832
+Author: tomerdayan168 <33786803+tomerdayan168@users.noreply.github.com>
+Date:   Thu Mar 29 00:19:01 2018 +0300
+
+    Add files via upload
+
+commit 8684a0f7b59467c9a55c34133294d27dd973b61a
+Author: erm19 <33811417+erm19@users.noreply.github.com>
+Date:   Thu Mar 29 00:16:35 2018 +0300
+
+    Initial commit
