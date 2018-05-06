@@ -76,13 +76,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
+
     <None Include="ImageService\App.config">
       <SubType>Designer</SubType>
     </None>
-=======
+
     <None Include="ImageService\App.config" />
->>>>>>> 693224437f9e91d6dbf63e8e57d1ef91c76540c5
+
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ImageService\ImageService.resx">
