@@ -1,4 +1,5 @@
 ﻿using ImageService.Commands;
+using ImageService.Controller.Handlers;
 using ImageService.Infrastructure;
 using ImageService.Infrastructure.Enums;
 using ImageService.Modal;
@@ -14,6 +15,7 @@ namespace ImageService.Controller
     {
         private IImageServiceModal m_modal; // The Modal Object
         private Dictionary<int, ICommand> commands;
+        Dictionary<string, IDirectoryHandler> handlers;
 
         /// <summary>
         /// Constructor for ImageController.
@@ -25,10 +27,13 @@ namespace ImageService.Controller
             m_modal = modal; 
             commands = new Dictionary<int, ICommand>()
             {
-                {(int)CommandEnum.NewFileCommand, new NewFileCommand(m_modal) }
+                {(int)CommandEnum.NewFileCommand, new NewFileCommand(m_modal) } ,
+               /* { (int)CommandEnum.CloseCommand, new CloseCommand( m_modal , handlers) }*/
             };
         }
-
+        public void setDirectory(Dictionary<string, IDirectoryHandler> handlers) { this.handlers = handlers;
+            commands.Add((int)CommandEnum.CloseCommand, new CloseCommand(m_modal, handlers));
+        }
         /// <summary>
         /// Executes the command using the right Command.
         /// </summary>
@@ -48,6 +53,11 @@ namespace ImageService.Controller
                 resultSuccesful = false;
                 return "command not found";
             }
+        }
+
+        public void setDirectory()
+        {
+            throw new NotImplementedException();
         }
     }
 }
