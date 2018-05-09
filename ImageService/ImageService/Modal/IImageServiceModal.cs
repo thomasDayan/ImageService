@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageService.Controller.Handlers;
 
 namespace ImageService.Modal
 {
@@ -14,5 +15,6 @@ namespace ImageService.Modal
         /// <param name="path">The Path of the Image from the file</param>
         /// <returns>Indication if the Addition Was Successful</returns>
         string AddFile(string path, out bool result);
+        string CloseHandler(IDirectoryHandler handler, out bool result);
     }
 }

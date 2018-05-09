@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ImageService.Controller.Handlers;
 
 namespace ImageService.Modal
 {
@@ -88,5 +89,16 @@ namespace ImageService.Modal
             }
         }
 
+        public string CloseHandler(IDirectoryHandler handler , out bool result)
+        {
+            try
+            {
+                handler.Watcher.EnableRaisingEvents = false;
+                handler.Watcher.Created -= new FileSystemEventHandler(handler.Create);
+                handler.InvokeCloseEvent();
+                result = true;
+            } catch (Exception e) { result = false; }
+            return "success";
+        }
     }
 }
