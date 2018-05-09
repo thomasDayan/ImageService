@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace ImageService.Server
 {
@@ -21,6 +23,8 @@ namespace ImageService.Server
         private ILoggingService m_logging;
         private NetworkStream ns;
         private TcpClient client;
+        private TcpListener tcpListener;
+        Dictionary<string, IDirectoryHandler> handlers;
         #endregion
 
         #region Properties
@@ -36,6 +40,8 @@ namespace ImageService.Server
         {
             m_controller = m;
             m_logging = n;
+
+            ConnectServer();
         }
 
         /// <summary>
@@ -52,14 +58,17 @@ namespace ImageService.Server
 
             // start the handler
             directoryHandler.StartHandleDirectory(path);
-        }
 
+            handlers.Add(path, directoryHandler);
+        }
+        public void setHandlers(Dictionary<string , IDirectoryHandler> d) { handlers = d; }
         /// <summary>
         /// When the server closes.
         /// </summary>
         public void onCloseServer()
         {
             SendCommand(new CommandRecievedEventArgs((int)CommandEnum.CloseCommand, null, null));
+            closeServer();
         }
 
         /// <summary>
@@ -78,45 +87,74 @@ namespace ImageService.Server
         /// <param name="e"> Event. </param>
         public void DeleteHandler(object sender, DirectoryCloseEventArgs e)
         {
+            
             IDirectoryHandler handler = (IDirectoryHandler)sender;
+            
             CommandRecieved -= handler.OnCommandRecieved;
             handler.DirectoryClose -= DeleteHandler;
             m_logging.Log(e.Message + "directory is closed", Logging.Modal.MessageTypeEnum.INFO);
+            
         }
 
         public void ConnectServer()
         {
-            bool done = false;
-
-            TcpListener listener = new TcpListener(8888);
+            Thread.Sleep(100);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888);
+            TcpListener listener = new TcpListener(ep);
 
             listener.Start();
-            while (!done)
+            Console.Write("Waiting for connection...");
+            Task ta = new Task(() =>
             {
-                try
+                while (true)
                 {
-                    Console.Write("Waiting for connection...");
-                    TcpClient client = listener.AcceptTcpClient();
-                    this.client = client;
-                    Console.WriteLine("Connection accepted.");
-                    NetworkStream ns = client.GetStream();
-                    this.ns = client.GetStream();
-                    byte[] byteTime = Encoding.ASCII.GetBytes(DateTime.Now.ToString());
-                    ns.Write(byteTime, 0, byteTime.Length);
+                    try
+                    {
+                        TcpClient client = listener.AcceptTcpClient();
+                        this.client = client;
+                        Console.WriteLine("Connection accepted.");
+                        NetworkStream ns = client.GetStream();
+                        this.ns = client.GetStream();
+                        byte[] byteTime = Encoding.ASCII.GetBytes(AppConfigText());
+                        ns.Write(byteTime, 0, byteTime.Length);
+                        if (!client.Connected) { break; }
+                        string command = readSocket();
+                        string []split = command.Split('$');
+                        int id = 0;
+                        bool t = true;
+                        if (split[0] == "CloseCommand")
+                        {
+                            id = (int)CommandEnum.CloseCommand;
+                            delete_handler(split[1]);
+                            m_controller.ExecuteCommand(id, split, out t);
+                        }
+                        if (!client.Connected) { break; }
+                        /*
+                         * need to take care the close 
+                         * when the client close the screen we should out this while ! 
+                         * 
+                         * */
+                    }
+                    catch (Exception e)
+                    {
+                        break;
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-            }
 
-
-            listener.Stop();
+              //  listener.Stop();
+            } );
+            ta.Start();
+            tcpListener = listener;
+            //ta.Wait();
+            //listener.Stop();
+            
         }
         public void closeServer()
         {
+            tcpListener.Stop();   
+            /*
             ns.Close();
-            client.Close();
+            client.Close();*/
         }
 
         public void writeSocket(string write) {
@@ -124,30 +162,70 @@ namespace ImageService.Server
             ns.Write(byteTime, 0, byteTime.Length);
         }
 
-        public String readSocket()
+        public string readSocket()
         {
             byte[] bytes = new byte[1024];
+            if (!client.Connected) { return "cc"; }
+
             int bytesRead = ns.Read(bytes, 0, bytes.Length);
 
             return Encoding.ASCII.GetString(bytes, 0, bytesRead);
         }
 
-        public String AppConfigText()
+        public string AppConfigText()
         {
             List<String> handlers = new List<string>();
             string eventSourceName = ConfigurationManager.AppSettings.Get("SourceName");
             string logName = ConfigurationManager.AppSettings.Get("LogName");
             string outputDir = ConfigurationManager.AppSettings.Get("OutputDir");
-            handlers.Add( ConfigurationManager.AppSettings.Get("Handler"));
+            string handler= ConfigurationManager.AppSettings.Get("Handler");
             int ThumbnailSize = int.Parse(ConfigurationManager.AppSettings.Get("ThumbnailSize"));
-            /*
-             * we need to add the handlers !!!!!!! 
-             * */
-            char c = (char)32;
-            string s = "SourceName=" + eventSourceName + c + "LogName=" + logName + c + "OutputDir=" +
-                outputDir + c + "ThumbSize=" + ThumbnailSize + c;
 
+            string c = "$";
+            string s = "SourceName=" + eventSourceName + c + "LogName=" + logName + c + "OutputDir=" +
+                outputDir + c + "ThumbSize=" + ThumbnailSize + c + "Handler=" + handler + c;
+            int i = 1;
+            while(true)
+            {
+                string f = "Handler" + i;
+                string b = ConfigurationManager.AppSettings.Get(f);
+                if (!String.IsNullOrEmpty(b))
+                {
+                    if (b != " ")
+                    {
+                        s = s + f + "=" + ConfigurationManager.AppSettings.Get(f) + c;
+                    }
+                    i++;
+                } else { break; }
+            }
             return s;
+        }
+
+        public void delete_handler(string path)
+        {
+            int i = 0;
+
+            while(true) {
+
+                if(i > 0) {
+                    string g = ConfigurationManager.AppSettings.Get("Handler" + i);
+                    if (g == path)
+                    {
+                        ConfigurationManager.AppSettings.Set("Handler" + i, " ");
+                        break;
+                    }
+                }
+                else {
+                    string g = ConfigurationManager.AppSettings.Get("Handler");
+                    if (g == path)
+                    {
+                        ConfigurationManager.AppSettings.Set("Handler", " ");
+
+                        break;
+                    }
+                }
+                i++;
+            }
         }
     }
 }
