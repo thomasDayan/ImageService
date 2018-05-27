@@ -21,6 +21,9 @@ namespace ImageService.Controller.Handlers
         private FileSystemWatcher m_dirWatcher;             // The Watcher of the Dir
         private string m_path;                              // The Path of directory
         #endregion
+        /// <summary>
+        /// Get the wathcher.
+        /// </summary>
         public FileSystemWatcher Watcher
         {
             get
@@ -114,10 +117,12 @@ namespace ImageService.Controller.Handlers
             DirectoryCloseEventArgs d = new DirectoryCloseEventArgs(m_path, "Closing directory" + m_path);
             DirectoryClose?.Invoke(this , d);
         }
-
+        /// <summary>
+        /// Invoke the close event.
+        /// </summary>
         public void InvokeCloseEvent()
         {
-            DirectoryClose?.Invoke(this, new DirectoryCloseEventArgs(m_path, "Directory " + this.m_path + " closed"));
+            DirectoryClose?.Invoke(this, new DirectoryCloseEventArgs(m_path, "Directory " + this.m_path + " "));
         }
     }
 }
