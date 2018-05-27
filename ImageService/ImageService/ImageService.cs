@@ -102,7 +102,7 @@ namespace ImageService
                 }
             } catch(Exception e)
             {
-                return;
+                logging.Log(e.ToString() , MessageTypeEnum.FAIL);
             }
             
             eventLog1.Source = eventSourceName;
@@ -120,22 +120,27 @@ namespace ImageService
             int i = 1;
             handlers = new Dictionary<string, IDirectoryHandler>();
             m_imageServer.setHandlers(handlers);
-            while(true) {
-                string handlers = ConfigurationManager.AppSettings.Get("Handler" + i);
-                if (handlers != " ")
-                {
-                    if (!String.IsNullOrEmpty(handlers))
-                    {
-                        m_imageServer.CreateHandler(handlers);
-                        i++;
-                    }
-                    else { break; }
-                }
-            }
-            m_imageServer.CreateHandler(handler);
-            controller.setDirectory(handlers);
-        }
 
+            string []str = handler.Split(new[] { ";" }, StringSplitOptions.None);
+            for (int j = 0; j < str.Length; j++)
+            {
+                m_imageServer.CreateHandler(str[j]);
+            }
+            
+            controller.setDirectory(handlers);
+
+            m_imageServer.setEventLog(eventLog1);
+        }
+        /// <summary>
+        /// Constractor.
+        /// </summary>
+        /// <param name="components"></param>
+        /// <param name="m_imageServer"></param>
+        /// <param name="modal"></param>
+        /// <param name="controller"></param>
+        /// <param name="eventLog1"></param>
+        /// <param name="logging"></param>
+        /// <param name="eventId"></param>
         public ImageService(IContainer components, ImageServer m_imageServer, IImageServiceModal modal, IImageController controller, EventLog eventLog1, ILoggingService logging, int eventId)
         {
             this.components = components;
@@ -146,7 +151,9 @@ namespace ImageService
             this.logging = logging;
             this.eventId = eventId;
         }
-
+        /// <summary>
+        /// Constractor.
+        /// </summary>
         public ImageService()
         {
         }
@@ -159,8 +166,8 @@ namespace ImageService
         {
             System.Threading.Thread.Sleep(10000);
 
-
-            eventLog1.WriteEntry("In OnStart");
+            logging.Log("In OnStart" , MessageTypeEnum.INFO);
+            //eventLog1.WriteEntry("In OnStart");
             // Set up a timer to trigger every minute.  
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = 60000; // 60 seconds  
@@ -201,7 +208,8 @@ namespace ImageService
             SetServiceStatus(ServiceHandle, ref serviceStatus);
 
             // write stop to event log
-            eventLog1.WriteEntry("In onStop.");
+            //            eventLog1.WriteEntry("In onStop.");
+            logging.Log("In OnStop", MessageTypeEnum.INFO);
 
             // close the server
             m_imageServer.onCloseServer();
@@ -227,6 +235,10 @@ namespace ImageService
         {
             this.eventLog1 = new System.Diagnostics.EventLog();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
+            // 
+            // eventLog1
+            // 
+            this.eventLog1.EntryWritten += new System.Diagnostics.EntryWrittenEventHandler(this.eventLog1_EntryWritten);
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
 
         }
@@ -247,9 +259,16 @@ namespace ImageService
                 default: type = EventLogEntryType.Information; break;
             }
             eventLog1.WriteEntry(e.Message, type);
-            
+            if (m_imageServer.GetHandleLogs() != null)
+            {
+                m_imageServer.GetHandleLogs().SendLog(e);
+            }
         }
-
+        /// <summary>
+        /// Function that ovveride the equals.
+        /// </summary>
+        /// <param name="obj"> the object. </param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             var service = obj as ImageService;
@@ -262,7 +281,10 @@ namespace ImageService
                    EqualityComparer<ILoggingService>.Default.Equals(logging, service.logging) &&
                    eventId == service.eventId;
         }
-
+        /// <summary>
+        /// Function the get the hash code.
+        /// </summary>
+        /// <returns> get the hash code .</returns>
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -316,6 +338,11 @@ namespace ImageService
         protected override void OnCustomCommand(int command)
         {
             base.OnCustomCommand(command);
+        }
+
+        private void eventLog1_EntryWritten(object sender, EntryWrittenEventArgs e)
+        {
+
         }
     }
 }
