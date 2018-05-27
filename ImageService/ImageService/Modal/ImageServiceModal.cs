@@ -65,7 +65,8 @@ namespace ImageService.Modal
                     // Move the file if not exist already
                     if (!File.Exists(m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path)))
                     {
-                        File.Move(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
+                        File.Copy(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
+                        //File.Move(path, m_OutputFolder + year_month_Path + "\\" + Path.GetFileName(path));
                         Image image = Image.FromFile(path);
                         Image thumbnail_image = image.GetThumbnailImage(this.m_thumbnailSize, 
                             this.m_thumbnailSize, () => false, IntPtr.Zero);
@@ -88,7 +89,12 @@ namespace ImageService.Modal
                 return "File doesn't exist!";
             }
         }
-
+        /// <summary>
+        /// Close the handler functions.
+        /// </summary>
+        /// <param name="handler">The directory.</param>
+        /// <param name="result">The result status. </param>
+        /// <returns></returns>
         public string CloseHandler(IDirectoryHandler handler , out bool result)
         {
             try
