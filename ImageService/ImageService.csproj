@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -53,7 +56,9 @@
     <Compile Include="ImageService.Logging\Modal\MessageRecievedEventArgs.cs" />
     <Compile Include="ImageService.Logging\Modal\MessageTypeEnum.cs" />
     <Compile Include="ImageService\Commands\CloseCommand.cs" />
+    <Compile Include="ImageService\Commands\GetConfigCommand.cs" />
     <Compile Include="ImageService\Commands\ICommand.cs" />
+    <Compile Include="ImageService\Commands\LogCommand.cs" />
     <Compile Include="ImageService\Commands\NewFileCommand.cs" />
     <Compile Include="ImageService\Controller\Handlers\DirectoryHandler.cs" />
     <Compile Include="ImageService\Controller\Handlers\IDirectoryHandler.cs" />
@@ -66,6 +71,8 @@
     <Compile Include="ImageService\Modal\Event\DirectoryCloseEventArgs.cs" />
     <Compile Include="ImageService\Modal\IImageServiceModal.cs" />
     <Compile Include="ImageService\Modal\ImageServiceModal.cs" />
+    <Compile Include="ImageService\Server\HandleLogs.cs" />
+    <Compile Include="ImageService\Server\HandleSettings.cs" />
     <Compile Include="ImageService\Server\ImageServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
@@ -81,6 +88,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="ImageService\App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ImageService\ImageService.resx">
