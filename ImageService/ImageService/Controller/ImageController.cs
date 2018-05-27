@@ -54,7 +54,9 @@ namespace ImageService.Controller
                 return "command not found";
             }
         }
-
+        /// <summary>
+        /// Not implement directory.
+        /// </summary>
         public void setDirectory()
         {
             throw new NotImplementedException();

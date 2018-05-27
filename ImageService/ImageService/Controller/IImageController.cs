@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ImageService.Controller
 {
+    /// <summary>
+    /// The interface of the image controller.
+    /// </summary>
     public interface IImageController
     {
         void setDirectory(Dictionary<string, IDirectoryHandler> handlers);
