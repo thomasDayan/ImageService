@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ImageService.Commands
 {
+    /// <summary>
+    /// New file command class.
+    /// </summary>
     public class NewFileCommand : ICommand
     {
         private IImageServiceModal m_modal;

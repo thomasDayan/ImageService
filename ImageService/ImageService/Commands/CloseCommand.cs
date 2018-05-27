@@ -9,20 +9,19 @@ using System.Threading.Tasks;
 
 namespace ImageService.Commands
 {
-    /*
-     * 
-     * need to implemanet this shit 
-     * 
-     * 
-     * 
-     * 
-     * */
-
-
+    /// <summary>
+    /// The close command class.
+    /// </summary>
     public class CloseCommand : ICommand
     {
         private IImageServiceModal model;
         Dictionary<string, IDirectoryHandler> handlers;
+        /// <summary>
+        /// apply When execute function.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <param name="result">The result of the arguments.</param>
+        /// <returns></returns>
         public string Execute(string[] args, out bool result)
         {
             result = true;
@@ -35,7 +34,11 @@ namespace ImageService.Commands
 
             return "ok";
         }
-
+        /// <summary>
+        /// Constractor.
+        /// </summary>
+        /// <param name="model">The image service model.</param>
+        /// <param name="handlers">The directory handler. </param>
         public CloseCommand(IImageServiceModal model , Dictionary<string, IDirectoryHandler> handlers)
         {
             this.model = model;
